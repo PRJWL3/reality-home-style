@@ -1,0 +1,9 @@
+{
+  "appId": "com.prjwl3.realityhomestyle",
+  "appName": "ARDesign",
+  "webDir": "dist",
+  "server": {
+    "url": "https://reality-home-style.lovable.app",
+    "cleartext": true
+  }
+}
