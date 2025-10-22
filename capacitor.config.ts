@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.2d2d9f4eb7b94a6480f5ac0b3fc54410',
+  appId: 'com.prjwl3.realityhomestyle',
   appName: 'ARDesign',
   webDir: 'dist',
   server: {
