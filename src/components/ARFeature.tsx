@@ -2,7 +2,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, Maximize2, RotateCw, CheckCircle } from "lucide-react";
 
-export const ARFeature = () => {
+interface ARFeatureProps {
+  onOpenCamera: () => void;
+}
+
+export const ARFeature = ({ onOpenCamera }: ARFeatureProps) => {
   return (
     <section id="ar" className="py-20 px-4 bg-gradient-to-b from-background to-muted/30">
       <div className="container">
@@ -54,7 +58,7 @@ export const ARFeature = () => {
               </div>
             </div>
             
-            <Button variant="hero" size="lg" className="gap-2">
+            <Button variant="hero" size="lg" className="gap-2" onClick={onOpenCamera}>
               <Camera className="h-5 w-5" />
               Launch AR Camera
             </Button>

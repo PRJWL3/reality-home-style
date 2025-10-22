@@ -35,7 +35,11 @@ const products = [
   },
 ];
 
-export const ProductGrid = () => {
+interface ProductGridProps {
+  onOpenCamera: () => void;
+}
+
+export const ProductGrid = ({ onOpenCamera }: ProductGridProps) => {
   return (
     <section id="products" className="py-20 px-4">
       <div className="container">
@@ -50,7 +54,7 @@ export const ProductGrid = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.id} {...product} />
+            <ProductCard key={product.id} {...product} onViewInAR={onOpenCamera} />
           ))}
         </div>
       </div>

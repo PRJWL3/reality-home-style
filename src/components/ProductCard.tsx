@@ -8,9 +8,10 @@ interface ProductCardProps {
   price: number;
   category: string;
   image: string;
+  onViewInAR?: () => void;
 }
 
-export const ProductCard = ({ name, price, category, image }: ProductCardProps) => {
+export const ProductCard = ({ name, price, category, image, onViewInAR }: ProductCardProps) => {
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-[var(--shadow-card)]">
       <CardContent className="p-0">
@@ -32,7 +33,7 @@ export const ProductCard = ({ name, price, category, image }: ProductCardProps) 
         </div>
         
         <div className="flex gap-2 w-full">
-          <Button variant="ar" className="flex-1 gap-2">
+          <Button variant="ar" className="flex-1 gap-2" onClick={onViewInAR}>
             <Scan className="h-4 w-4" />
             View in AR
           </Button>

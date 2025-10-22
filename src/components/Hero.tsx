@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Scan, Sparkles } from "lucide-react";
 import heroRoom from "@/assets/hero-room.jpg";
 
-export const Hero = () => {
+interface HeroProps {
+  onOpenCamera: () => void;
+}
+
+export const Hero = ({ onOpenCamera }: HeroProps) => {
   return (
     <section className="relative min-h-[80vh] flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -34,11 +38,11 @@ export const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button variant="hero" size="lg" className="gap-2">
+            <Button variant="hero" size="lg" className="gap-2" onClick={onOpenCamera}>
               <Scan className="h-5 w-5" />
               Start AR Experience
             </Button>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" onClick={() => document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' })}>
               Browse Products
             </Button>
           </div>
