@@ -1,16 +1,53 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { X, RotateCw, Maximize2, Camera } from "lucide-react";
+import { X, RotateCw, Maximize2, Camera, Scan } from "lucide-react";
 import { toast } from "sonner";
+import { Capacitor } from "@capacitor/core";
+
+interface Product {
+  id: string;
+  name: string;
+  modelPath: string;
+  image: string;
+}
 
 interface ARCameraProps {
   onClose: () => void;
+  selectedProduct?: Product;
 }
 
-export const ARCamera = ({ onClose }: ARCameraProps) => {
+export const ARCamera = ({ onClose, selectedProduct }: ARCameraProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const [isNative, setIsNative] = useState(false);
+  
+  const availableProducts: Product[] = [
+    {
+      id: "1",
+      name: "Modern Gray Sofa",
+      modelPath: "/models/sofa.glb",
+      image: "/assets/products/sofa.jpg"
+    },
+    {
+      id: "2",
+      name: "Wooden Coffee Table",
+      modelPath: "/models/table.glb",
+      image: "/assets/products/coffee-table.jpg"
+    },
+    {
+      id: "3",
+      name: "Pendant Lamp",
+      modelPath: "/models/lamp.glb",
+      image: "/assets/products/lamp.jpg"
+    },
+    {
+      id: "4",
+      name: "Monstera Plant",
+      modelPath: "/models/plant.glb",
+      image: "/assets/products/plant.jpg"
+    }
+  ];
 
   const startCamera = async () => {
     try {
@@ -49,9 +86,47 @@ export const ARCamera = ({ onClose }: ARCameraProps) => {
   };
 
   useEffect(() => {
-    startCamera();
+    setIsNative(Capacitor.isNativePlatform());
+    if (isNative && selectedProduct) {
+      launchNativeAR(selectedProduct);
+    } else {
+      startCamera();
+    }
     return () => stopCamera();
-  }, [facingMode]);
+  }, [facingMode, selectedProduct, isNative]);
+
+  const launchNativeAR = async (product: Product) => {
+    try {
+      // Check if running on native platform
+      if (!Capacitor.isNativePlatform()) {
+        toast.error("Native AR is only available on Android devices");
+        return;
+      }
+
+      // Call native ARCore plugin
+      const { ARPlugin } = await import('../plugins/ar-plugin');
+      const result = await ARPlugin.openARView({
+        modelPath: product.modelPath,
+        productName: product.name
+      });
+
+      if (result.success) {
+        toast.success("AR view launched!");
+        onClose();
+      }
+    } catch (error) {
+      console.error("AR launch error:", error);
+      toast.error("Failed to launch AR. Make sure ARCore is installed and device supports AR.");
+    }
+  };
+
+  const handleProductSelect = (product: Product) => {
+    if (isNative) {
+      launchNativeAR(product);
+    } else {
+      toast.info(`Selected ${product.name}. Install as native app for full AR experience.`);
+    }
+  };
 
   const handleClose = () => {
     stopCamera();
@@ -116,12 +191,12 @@ export const ARCamera = ({ onClose }: ARCameraProps) => {
             <X className="h-6 w-6" />
           </Button>
 
-          {/* Capture Button */}
+          {/* Capture Button - Launch AR or show models */}
           <Button
             variant="hero"
             size="icon"
             className="rounded-full w-20 h-20 shadow-[var(--shadow-ar)]"
-            onClick={() => toast.info("Product placement coming soon with native AR")}
+            disabled
           >
             <Camera className="h-8 w-8" />
           </Button>
@@ -137,17 +212,39 @@ export const ARCamera = ({ onClose }: ARCameraProps) => {
           </Button>
         </div>
 
-        {/* Info Card */}
-        <div className="mt-6 bg-black/60 backdrop-blur-sm rounded-2xl p-4 max-w-lg mx-auto">
-          <div className="flex items-start gap-3">
-            <Maximize2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
-            <div className="text-white text-sm">
-              <p className="font-semibold mb-1">Upgrade to Full AR</p>
-              <p className="text-white/80">
-                For 3D object placement and surface detection, export to native Android app with Capacitor
-              </p>
+        {/* Product Selection Grid */}
+        <div className="mt-6 max-w-lg mx-auto space-y-3">
+          <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-4">
+            <p className="text-white font-semibold mb-3">Select a product to place in AR:</p>
+            <div className="grid grid-cols-2 gap-3">
+              {availableProducts.map((product) => (
+                <button
+                  key={product.id}
+                  onClick={() => handleProductSelect(product)}
+                  className="bg-white/10 hover:bg-white/20 rounded-xl p-3 transition-all active:scale-95"
+                >
+                  <div className="aspect-square bg-white/5 rounded-lg mb-2 flex items-center justify-center">
+                    <Scan className="h-8 w-8 text-white/60" />
+                  </div>
+                  <p className="text-white text-sm font-medium">{product.name}</p>
+                </button>
+              ))}
             </div>
           </div>
+          
+          {!isNative && (
+            <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-4">
+              <div className="flex items-start gap-3">
+                <Maximize2 className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
+                <div className="text-white text-sm">
+                  <p className="font-semibold mb-1">Full AR on Native App</p>
+                  <p className="text-white/80">
+                    Export to native Android app with Capacitor for real 3D placement and surface detection
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
