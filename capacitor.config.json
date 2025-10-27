@@ -1,9 +1,9 @@
 {
-  "appId": "com.prjwl3.realityhomestyle",
-  "appName": "ARDesign",
+  "appId": "app.lovable.2d2d9f4eb7b94a6480f5ac0b3fc54410",
+  "appName": "reality-home-style",
   "webDir": "dist",
   "server": {
-    "url": "https://reality-home-style.lovable.app",
+    "url": "https://2d2d9f4e-b7b9-4a64-80f5-ac0b3fc54410.lovableproject.com?forceHideBadge=true",
     "cleartext": true
   }
 }
